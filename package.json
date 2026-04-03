@@ -1,0 +1,23 @@
+{
+  "name": "bias-audit-platform",
+  "version": "1.0.0",
+  "description": "BiasAudit - Hidden Bias Detector Platform",
+  "main": "backend/server.js",
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "install": "npm install --prefix backend",
+    "postinstall": "echo 'Backend dependencies installed'",
+    "dev": "cd backend && npm run dev"
+  },
+  "keywords": [
+    "bias-detection",
+    "ai",
+    "hackathon"
+  ],
+  "author": "",
+  "license": "MIT"
+}
