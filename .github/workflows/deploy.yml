@@ -1,4 +1,4 @@
-name: Verify Build
+name: Verify Inclusion Preflight
 
 on:
   push:
@@ -9,34 +9,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      
+
       - name: Install backend dependencies
         run: cd backend && npm install
-      
-      - name: Check backend code
-        run: cd backend && npm list
-        
+
+      - name: Check backend syntax
+        run: |
+          cd backend
+          node --check server.js
+          node --check controllers/biasController.js
+          node --check utils/analysisEngine.js
+
   verify-frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      
+
       - name: Install frontend dependencies
         run: cd frontend && npm install
-      
+
       - name: Build frontend
         run: cd frontend && npm run build
-      
+
       - name: Verify build output
         run: ls -la dist/
         working-directory: ./frontend

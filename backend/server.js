@@ -8,26 +8,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Routes
 app.use('/api/bias', biasAnalysisRoutes);
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({
-    status: 'Language audit API is running',
-    aiEnhancementEnabled: Boolean(process.env.GEMINI_API_KEY),
+    status: 'Inclusion Preflight API is running',
+    analyzer: 'inclusion-preflight-rules-engine',
     allowedOrigin: process.env.FRONTEND_URL || 'http://localhost:5173',
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 BiasAudit Backend running on http://localhost:${PORT}`);
+  console.log(`Inclusion Preflight API running on http://localhost:${PORT}`);
 });

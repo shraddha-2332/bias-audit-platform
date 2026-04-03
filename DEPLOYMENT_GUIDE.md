@@ -1,25 +1,24 @@
 # Deployment Guide
 
-## Architecture
+## Product architecture
 
-- `frontend/` is a Vite React application.
-- `backend/` is an Express API.
-- The platform works without external AI keys using the built-in rule engine.
-- `GEMINI_API_KEY` is optional and only improves rewrite suggestions.
+- `frontend/` is the Vite React application.
+- `backend/` is the Express API.
+- The product does not require an external AI service to function.
+- Review history is stored by the backend and exposed through the API.
 
-## Environment Variables
+## Environment variables
 
 ### Backend
 
 - `PORT=5000`
 - `FRONTEND_URL=https://your-frontend-domain.vercel.app`
-- `GEMINI_API_KEY=your_key_here` optional
 
 ### Frontend
 
 - `VITE_API_URL=https://your-backend-domain.up.railway.app`
 
-## Local Run
+## Local run
 
 ### Backend
 
@@ -37,59 +36,59 @@ npm install
 npm run dev
 ```
 
-The frontend expects the API at `VITE_API_URL` and falls back to `http://localhost:5000`.
+## Recommended deployment
 
-## Deploy Backend on Railway
+### Backend on Railway
 
-1. Create a new Railway project from the GitHub repository.
-2. Set the root directory to `backend` if Railway asks.
-3. Add `FRONTEND_URL` and optionally `GEMINI_API_KEY`.
-4. Confirm the health endpoint responds at `/api/health`.
+1. Create a Railway project from this GitHub repository.
+2. Set the root directory to `backend`.
+3. Add `FRONTEND_URL` with your deployed frontend origin.
+4. Deploy and confirm `GET /api/health` returns a healthy response.
 
 Expected health response:
 
 ```json
 {
-  "status": "Language audit API is running",
-  "aiEnhancementEnabled": false,
+  "status": "Inclusion Preflight API is running",
+  "analyzer": "inclusion-preflight-rules-engine",
   "allowedOrigin": "http://localhost:5173"
 }
 ```
 
-## Deploy Frontend on Vercel
+### Frontend on Vercel
 
 1. Import the same repository into Vercel.
 2. Set the root directory to `frontend`.
-3. Add `VITE_API_URL` pointing to the Railway backend.
+3. Add `VITE_API_URL` pointing to the deployed Railway backend.
 4. Build command: `npm run build`
 5. Output directory: `dist`
 
-## CI Verification
+## Post-deploy checks
 
-The workflow at `.github/workflows/deploy.yml` installs dependencies and builds the frontend on every push to `main`.
+1. `GET /api/health` responds from the backend.
+2. The frontend can load review history from `/api/bias/history`.
+3. Running a preflight review returns a report from `/api/bias/analyze`.
+4. Aggregate stats load from `/api/bias/stats`.
+5. Editorial guidance loads from `/api/bias/education`.
 
-## Production Checklist
+## CI
 
-- Frontend can load `/api/health` from the deployed backend.
-- Running an audit returns a report from `/api/bias/analyze`.
-- History loads from `/api/bias/history`.
-- `FRONTEND_URL` matches the deployed frontend domain.
-- If `GEMINI_API_KEY` is omitted, the product still works with rule-based analysis.
+The workflow in `.github/workflows/deploy.yml` verifies backend dependency install, backend syntax checks, and frontend production build on pushes to `main`.
 
 ## Troubleshooting
 
 ### Frontend cannot reach backend
 
 - Verify `VITE_API_URL` is correct.
-- Verify the backend allows your deployed frontend via `FRONTEND_URL`.
-- Open the browser network tab and confirm requests go to `/api/bias/analyze`.
+- Verify the backend is deployed and the frontend origin matches `FRONTEND_URL`.
+- Open the browser network tab and inspect failed requests.
 
 ### CORS errors
 
 - Set `FRONTEND_URL` to the exact deployed frontend origin.
 - Redeploy the backend after changing environment variables.
 
-### No AI enhancement
+### History is empty after redeploy
 
-- This is expected when `GEMINI_API_KEY` is missing.
-- Core analysis still works because the rules engine is local.
+- The current implementation uses local backend storage.
+- If your host uses ephemeral storage, switch the history layer to a real database for persistence across deployments.

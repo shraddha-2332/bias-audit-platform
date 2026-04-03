@@ -2,6 +2,7 @@ import express from 'express';
 import { 
   analyzeBias, 
   getAnalysisHistory,
+  getAnalysisStats,
   getEducationalContent 
 } from '../controllers/biasController.js';
 
@@ -12,6 +13,9 @@ router.post('/analyze', analyzeBias);
 
 // Get analysis history
 router.get('/history', getAnalysisHistory);
+
+// Get aggregate stats
+router.get('/stats', getAnalysisStats);
 
 // Get educational content
 router.get('/education', getEducationalContent);
