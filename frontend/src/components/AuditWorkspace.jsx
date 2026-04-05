@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import axios from 'axios';
-import { FiArrowRight, FiCopy, FiFileText, FiRefreshCcw } from 'react-icons/fi';
+import { FiArrowRight, FiCopy, FiFileText, FiRefreshCcw, FiShield } from 'react-icons/fi';
 import { FindingsPanel } from './FindingsPanel';
 import { ToastContainer, useToast } from './Toast';
 
@@ -41,6 +41,24 @@ const sampleScenarios = [
     track: 'civic',
     title: 'Civic notice exclusion',
     summary: 'English-heavy public-service messaging with payment and smartphone assumptions.',
+  },
+];
+
+const trustSafetyScenarios = [
+  {
+    id: 'hostile',
+    label: 'Hostile text',
+    text: 'I am a hacker and I will exploit the system to steal data from users.',
+  },
+  {
+    id: 'phishing',
+    label: 'Phishing risk',
+    text: 'Ask users to share passwords and banking details so we can process the service faster.',
+  },
+  {
+    id: 'threat',
+    label: 'Threatening language',
+    text: 'If users do not comply immediately, we will attack their account and lock them out forever.',
   },
 ];
 
@@ -90,6 +108,12 @@ const workflowSteps = [
   },
 ];
 
+const capabilityChecks = [
+  'Inclusive UX and accessibility barriers',
+  'Language, documentation, and deadline pressure',
+  'Unsafe, hostile, deceptive, or malicious wording',
+];
+
 export function AuditWorkspace({ onSaved, apiUrl }) {
   const [contentType, setContentType] = useState('scholarship');
   const [audience, setAudience] = useState('Students, applicants, citizens, and first-time digital users');
@@ -106,7 +130,7 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
     return [
       { label: 'Decision', value: result.releaseDecision },
       { label: 'Risk score', value: String(result.overallRiskScore) },
-      { label: 'Issues found', value: String(result.findings.length) },
+      { label: 'Issues found', value: String((result.findings || []).length) },
       { label: 'Audit engine', value: 'AccessWise' },
     ];
   }, [result]);
@@ -162,11 +186,11 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
       result.executiveSummary,
       ``,
       `## Action plan`,
-      ...result.actionPlan.map((item) => `- ${item}`),
+      ...((result.actionPlan || []).map((item) => `- ${item}`)),
       ``,
       `## Findings`,
-      ...(result.findings.length
-        ? result.findings.map(
+      ...((result.findings || []).length
+        ? (result.findings || []).map(
             (item) =>
               `- ${item.category} (${item.severity}): "${item.trigger}" -> ${item.recommendedText}`
           )
@@ -246,6 +270,49 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
         </div>
       </div>
 
+      <div className="panel trust-panel">
+        <div className="section-heading">
+          <div>
+            <p className="kicker">Reliability checks</p>
+            <h3>Quick-test trust and safety behavior</h3>
+          </div>
+          <p className="section-note">These examples help you prove the product blocks unsafe or clearly illegitimate wording, not just exclusion barriers.</p>
+        </div>
+
+        <div className="trust-grid">
+          <div className="trust-card trust-card-primary">
+            <div className="section-title trust-title">
+              <FiShield />
+              <h4>What the engine checks now</h4>
+            </div>
+            <ul className="plain-list compact-list">
+              {capabilityChecks.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="trust-scenario-list">
+            {trustSafetyScenarios.map((scenario) => (
+              <button
+                key={scenario.id}
+                type="button"
+                className="trust-scenario-card"
+                onClick={() => {
+                  setText(scenario.text);
+                  setIntent('Trust and safety review before launch');
+                  setResult(null);
+                  setRecord(null);
+                  addToast(`${scenario.label} loaded into the editor.`, 'success');
+                }}
+              >
+                <span>{scenario.label}</span>
+                <strong>{scenario.text}</strong>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="panel audit-panel">
         <div className="section-heading">
           <div>
@@ -300,18 +367,18 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
-            placeholder="Paste instructions, notices, form guidance, or onboarding text."
+            placeholder="Paste instructions, notices, form guidance, onboarding text, or suspicious wording you want to review."
           />
         </label>
 
         <div className="editor-help">
           <article className="editor-help-card">
             <span>What to paste</span>
-            <p>Eligibility messages, upload instructions, policy notices, warnings, form labels, or onboarding steps.</p>
+            <p>Eligibility messages, upload instructions, policy notices, warnings, form labels, onboarding steps, or unsafe wording you want to test.</p>
           </article>
           <article className="editor-help-card">
             <span>Best demo move</span>
-            <p>Show a stressful instruction block first, then explain how AccessWise turns that into an actionable launch decision.</p>
+            <p>Show one exclusion scenario first, then one trust-and-safety scenario to prove AccessWise covers both usability and reliability risk.</p>
           </article>
         </div>
 
@@ -366,7 +433,16 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
           onExportMarkdown={exportMarkdown}
           metrics={summaryMetrics}
         />
-      ) : null}
+      ) : (
+        <div className="panel empty-results-panel">
+          <p className="kicker">Result preview</p>
+          <h3>Run the audit to see the launch decision, impacted users, and rewrite guidance.</h3>
+          <p className="empty-results-copy">
+            AccessWise will return a clear verdict, severity-based findings, stakeholder impact, persona simulation,
+            and a safer rewritten version of the service copy.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

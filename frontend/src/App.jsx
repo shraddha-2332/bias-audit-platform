@@ -117,6 +117,11 @@ function App() {
             Review essential service flows the way a product team, policy lead, or judge would:
             understand the risk, see who is affected, and know what to fix next.
           </p>
+          <div className="hero-capabilities">
+            <span className="capability-pill">Inclusive UX review</span>
+            <span className="capability-pill">Trust and safety screening</span>
+            <span className="capability-pill">Policy-ready launch guidance</span>
+          </div>
         </div>
         <div className="status-card">
           <span className="status-label">System status</span>

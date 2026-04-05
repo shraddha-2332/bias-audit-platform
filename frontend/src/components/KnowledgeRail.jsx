@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiShield } from 'react-icons/fi';
 
 const principles = [
   {
@@ -31,6 +31,12 @@ const personas = [
   },
 ];
 
+const coverageAreas = [
+  'Launch decisions for essential services',
+  'Accessibility, language, tone, and document burden',
+  'Malicious, deceptive, or hostile wording',
+];
+
 export function KnowledgeRail({ education, stats, history = [] }) {
   const [historyFilter, setHistoryFilter] = useState('');
 
@@ -45,6 +51,21 @@ export function KnowledgeRail({ education, stats, history = [] }) {
 
   return (
     <aside className="knowledge-rail">
+      <div className="panel rail-spotlight">
+        <p className="kicker">Judge quick read</p>
+        <h3>What makes AccessWise different</h3>
+        <div className="knowledge-list">
+          {coverageAreas.map((item) => (
+            <article key={item} className="knowledge-card spotlight-card">
+              <div className="section-title spotlight-title">
+                <FiShield />
+                <h4>{item}</h4>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
       {stats ? (
         <div className="panel">
           <p className="kicker">Usage snapshot</p>
