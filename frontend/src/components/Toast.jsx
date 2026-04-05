@@ -59,9 +59,20 @@ export function ToastContainer({ toasts, removeToast }) {
 export function useToast() {
   const [toasts, setToasts] = React.useState([]);
 
+  const normalizeToastMessage = (message) => {
+    if (typeof message === 'string') return message;
+    if (message && typeof message.message === 'string') return message.message;
+
+    try {
+      return JSON.stringify(message);
+    } catch {
+      return 'Something went wrong.';
+    }
+  };
+
   const addToast = (message, type = 'info') => {
     const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
+    setToasts(prev => [...prev, { id, message: normalizeToastMessage(message), type }]);
   };
 
   const removeToast = (id) => {
@@ -70,3 +81,4 @@ export function useToast() {
 
   return { toasts, addToast, removeToast };
 }
+

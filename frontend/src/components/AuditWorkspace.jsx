@@ -195,7 +195,15 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
       onSaved?.(safeRecord);
       addToast('Audit complete. Review the decision, impacted personas, and next actions.', 'success');
     } catch (error) {
-      addToast(error.response?.data?.error || 'Audit failed. Check the backend.', 'error');
+      const errorPayload = error.response?.data?.error;
+      const errorMessage =
+        (typeof errorPayload === 'string' && errorPayload) ||
+        errorPayload?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        'Audit failed. Check the backend.';
+
+      addToast(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -489,3 +497,5 @@ export function AuditWorkspace({ onSaved, apiUrl }) {
     </section>
   );
 }
+
+
