@@ -3,7 +3,7 @@ import { AuditWorkspace } from './components/AuditWorkspace';
 import { KnowledgeRail } from './components/KnowledgeRail';
 import './index.css';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const apiUrl = import.meta.env.VITE_API_URL || '';
 
 function App() {
   const [history, setHistory] = useState([]);

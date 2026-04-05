@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FiSearch, FiShield } from 'react-icons/fi';
+import { FiSearch, FiShield, FiUsers } from 'react-icons/fi';
 
 const principles = [
   {
@@ -88,56 +88,46 @@ export function KnowledgeRail({ education, stats, history = [] }) {
               <strong>{stats.averageRiskScore}</strong>
             </div>
           </div>
+          {(stats.topCategories || []).length ? (
+            <div className="knowledge-list rail-signal-list">
+              {stats.topCategories.map((item) => (
+                <article key={item.category} className="knowledge-card compact-knowledge-card">
+                  <h4>{item.category}</h4>
+                  <p>{item.count} findings across recent audits.</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
 
-      <div className="panel">
-        <div className="rail-header">
-          <div>
-            <p className="kicker">Recent audits</p>
-            <h3>Reopen previous reviews</h3>
-          </div>
-          <label className="search-field">
-            <FiSearch />
-            <input
-              value={historyFilter}
-              onChange={(event) => setHistoryFilter(event.target.value)}
-              placeholder="Search audits"
-            />
-          </label>
-        </div>
-        <div className="history-list">
-          {filteredHistory.length === 0 ? (
-            <div className="history-card empty">Run an audit to start building an inclusion trail.</div>
-          ) : (
-            filteredHistory.map((item) => (
-              <article key={item.id} className="history-card history-card-readonly">
-                <div className="history-header">
-                  <span>{item.contentType}</span>
-                  <strong>{item.result?.overallRiskScore ?? 0}</strong>
-                </div>
-                <p>{item.textPreview}...</p>
-              </article>
-            ))
-          )}
-        </div>
-      </div>
-
-      {stats ? (
+      {history.length ? (
         <div className="panel">
-          <p className="kicker">Recent signals</p>
-          <h3>What your audit trail is showing</h3>
-          <div className="knowledge-list">
-            {(stats.topCategories || []).length === 0 ? (
-              <article className="knowledge-card">
-                <h4>No repeated barrier yet</h4>
-                <p>Once more audits are completed, this area will show the patterns that most often block real users.</p>
-              </article>
+          <div className="rail-header">
+            <div>
+              <p className="kicker">Recent audits</p>
+              <h3>Reopen previous reviews</h3>
+            </div>
+            <label className="search-field">
+              <FiSearch />
+              <input
+                value={historyFilter}
+                onChange={(event) => setHistoryFilter(event.target.value)}
+                placeholder="Search audits"
+              />
+            </label>
+          </div>
+          <div className="history-list">
+            {filteredHistory.length === 0 ? (
+              <div className="history-card empty">No previous audit matches that search yet.</div>
             ) : (
-              stats.topCategories.map((item) => (
-                <article key={item.category} className="knowledge-card">
-                  <h4>{item.category}</h4>
-                  <p>{item.count} findings across recent audits.</p>
+              filteredHistory.map((item) => (
+                <article key={item.id} className="history-card history-card-readonly">
+                  <div className="history-header">
+                    <span>{item.contentType}</span>
+                    <strong>{item.result?.overallRiskScore ?? 0}</strong>
+                  </div>
+                  <p>{item.textPreview}...</p>
                 </article>
               ))
             )}
@@ -146,24 +136,23 @@ export function KnowledgeRail({ education, stats, history = [] }) {
       ) : null}
 
       <div className="panel">
-        <p className="kicker">Core principles</p>
-        <h3>How to read the product correctly</h3>
+        <p className="kicker">Evaluation lens</p>
+        <h3>How the product should be judged</h3>
         <div className="knowledge-list">
           {principles.map((item) => (
-            <article key={item.title} className="knowledge-card">
+            <article key={item.title} className="knowledge-card compact-knowledge-card">
               <h4>{item.title}</h4>
               <p>{item.body}</p>
             </article>
           ))}
         </div>
-      </div>
-
-      <div className="panel">
-        <p className="kicker">Protected users</p>
-        <h3>Who this audit keeps in view</h3>
+        <div className="section-title rail-subsection-title">
+          <FiUsers />
+          <h4>Protected users</h4>
+        </div>
         <div className="knowledge-list">
           {personas.map((item) => (
-            <article key={item.title} className="knowledge-card">
+            <article key={item.title} className="knowledge-card compact-knowledge-card">
               <h4>{item.title}</h4>
               <p>{item.body}</p>
             </article>
@@ -177,7 +166,7 @@ export function KnowledgeRail({ education, stats, history = [] }) {
           <h3>Rules the system is enforcing</h3>
           <div className="knowledge-list">
             {education.guides.map((item) => (
-              <article key={item.id} className="knowledge-card">
+              <article key={item.id} className="knowledge-card compact-knowledge-card">
                 <h4>{item.title}</h4>
                 <p>{item.content}</p>
               </article>

@@ -683,6 +683,18 @@ textarea {
   margin: 0;
 }
 
+.rail-subsection-title {
+  margin-top: 18px;
+}
+
+.rail-signal-list {
+  margin-top: 18px;
+}
+
+.compact-knowledge-card {
+  padding: 16px 18px;
+}
+
 .severity-high {
   border-color: rgba(248, 113, 113, 0.3);
   background: linear-gradient(180deg, rgba(127, 29, 29, 0.16), rgba(255, 255, 255, 0.03));
