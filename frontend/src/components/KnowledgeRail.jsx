@@ -37,6 +37,11 @@ const coverageAreas = [
   'Malicious, deceptive, or hostile wording',
 ];
 
+function formatTrackName(value) {
+  if (!value) return 'General';
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 export function KnowledgeRail({ education, stats, history = [] }) {
   const [historyFilter, setHistoryFilter] = useState('');
 
@@ -124,8 +129,8 @@ export function KnowledgeRail({ education, stats, history = [] }) {
               filteredHistory.map((item) => (
                 <article key={item.id} className="history-card history-card-readonly">
                   <div className="history-header">
-                    <span>{item.contentType}</span>
-                    <strong>{item.result?.overallRiskScore ?? 0}</strong>
+                    <span className="history-track">{formatTrackName(item.contentType)}</span>
+                    <span className="history-score">Risk {item.result?.overallRiskScore ?? 0}</span>
                   </div>
                   <p>{item.textPreview}...</p>
                 </article>
